@@ -1,5 +1,7 @@
 import cors from 'cors';
 import express from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
 import { config } from './config/env.js';
 import { verifyDatabaseConnection } from './db/pool.js';
 import { authenticate } from './middleware/auth.js';
@@ -32,6 +34,17 @@ export function createApp() {
     app.use('/api', dashboardRoutes);
     app.use('/api/users', usersRoutes);
     app.use('/api/offers', offersRoutes);
+    if (config.frontendDirectory && fs.existsSync(config.frontendDirectory)) {
+        app.use(express.static(config.frontendDirectory));
+        app.use((req, res, next) => {
+            if (req.method !== 'GET' || req.path.startsWith('/api/') || req.path === '/health') {
+                return next();
+            }
+            return res.sendFile(path.join(config.frontendDirectory, 'index.html'), (error) => {
+                if (error) next(error);
+            });
+        });
+    }
     app.use(notFoundHandler);
     app.use(errorHandler);
     return app;

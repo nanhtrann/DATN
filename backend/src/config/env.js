@@ -19,6 +19,7 @@ export const config = Object.freeze({
     jwtSecret: process.env.JWT_SECRET,
     adminSetupKey: process.env.ADMIN_SETUP_KEY,
     uploadDirectory: path.join(backendDirectory, 'uploads'),
+    frontendDirectory: process.env.FRONTEND_DIR || '',
     geminiApiKey: process.env.GEMINI_API_KEY,
     geminiModel: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
     smtp: {
